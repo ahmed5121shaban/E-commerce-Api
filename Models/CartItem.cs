@@ -16,6 +16,8 @@ namespace Models
 
         public int ProductID { get; set; }
         public virtual Product Product { get; set; }
+        public string UserID { get; set; }
+        public virtual User User { get; set; }
     }
 
     public class CartItemConfigration : IEntityTypeConfiguration<CartItem>
@@ -32,6 +34,12 @@ namespace Models
                .WithMany(e => e.CartLists)
                .HasForeignKey(e => e.ProductID)
                .OnDelete(DeleteBehavior.NoAction)
+               .IsRequired();
+            builder
+               .HasOne(e => e.User)
+               .WithMany(e => e.CartList)
+               .HasForeignKey(e => e.UserID)
+               .OnDelete(DeleteBehavior.Cascade)
                .IsRequired();
 
         }

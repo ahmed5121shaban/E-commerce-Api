@@ -84,7 +84,6 @@ namespace ViewModel
             {
                 Email = user.Email,
                 UserName = user.UserName,
-                Name = user.UserName
             };
         }
 

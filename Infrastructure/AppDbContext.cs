@@ -19,6 +19,7 @@ namespace Infrastructure
             builder.ApplyConfiguration(new CartItemConfigration());
             builder.ApplyConfiguration(new CategoryConfiguration());
             builder.ApplyConfiguration(new ProductAttachmentConfiguration());
+            builder.ApplyConfiguration(new WishListItemConfigration());
 
             base.OnModelCreating(builder);
 
