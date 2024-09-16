@@ -46,7 +46,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.Configure<IdentityOptions>(option =>
 {
     option.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
-})
+});
 
 builder.Services.AddScoped<TokenManager>();
 builder.Services.AddScoped<AcountManager>();
