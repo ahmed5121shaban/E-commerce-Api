@@ -17,11 +17,10 @@ namespace Manager
             {
                 roleManager = _roleManager;
             }
-
             public async Task<IdentityResult> Add(RoleViewModel roleViewModel)
-            {
-                return await roleManager.CreateAsync(new IdentityRole { Name = roleViewModel.Name });
-            }
+                {
+                    return await roleManager.CreateAsync(new IdentityRole { Name = roleViewModel.Name });
+                }
 
         
     }

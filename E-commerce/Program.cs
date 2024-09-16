@@ -12,7 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -42,7 +43,16 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.Configure<IdentityOptions>(option =>
+{
+    option.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
+})
+
 builder.Services.AddScoped<TokenManager>();
+builder.Services.AddScoped<AcountManager>();
+builder.Services.AddScoped<CartManager>();
+builder.Services.AddScoped<ProductManager>();
+
 
 
 

@@ -47,6 +47,28 @@ namespace Manager
 
         }
 
+        public async Task<IdentityResult> ChangePassword(UserChangePassword userChange) 
+        {
+            var user = await UserManager.FindByIdAsync(userChange.OldPassword);
+            return await UserManager.ChangePasswordAsync(user, userChange.OldPassword, userChange.NewPassword);
+        }
+
+        public async Task<string> GeneratePasswordResetToken(string email)
+        {
+            var user =await UserManager.FindByEmailAsync(email);
+            if (user == null)
+                return string.Empty;
+            return await UserManager.GeneratePasswordResetTokenAsync(user);
+        }
+        public async Task<IdentityResult> RessetPassword(UserResetPasswordViewModel userReset) 
+        {
+            var user = await UserManager.FindByEmailAsync(userReset.Email);
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError{ Description="This Email Is Not Found"});
+            return await UserManager.ResetPasswordAsync(user, userReset.Code, userReset.newPassword);
+        } 
+
+
         public async void LogOut()
         {
             await SignInManager.SignOutAsync();
