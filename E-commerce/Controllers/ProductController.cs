@@ -23,6 +23,7 @@ namespace E_commerce
             this.cloudinaryService = CloudinaryService;
 
         }
+        [HttpGet]
         public IActionResult GetAll(string columnOrder = "Id", int categoryID = 0,
             int price = 0, string productName = "",
             bool IsAscending = false, int PageSize = 4, int PageNumber = 1)
@@ -30,59 +31,51 @@ namespace E_commerce
             Pagination<Product> products = ProductManeger.GetAllWithFilter(columnOrderBy: columnOrder,
                 IsAscending: IsAscending, productName: productName,
                 categoryID: categoryID, price: price, PageSize: PageSize, PageNumber: PageNumber);
-            return RedirectToAction("getall", "product");
+            if(products == null)
+                return NotFound();
+            return Ok(products);
         }
 
+        [HttpGet("{id}")]
         public IActionResult GetDetailsByID(int id)
         {
             ProductViewModel pro = ProductManeger.GetByID(id).Single().MapToView();
-            return RedirectToAction("getall", "product");
+            if (pro == null)
+                return NotFound();
+
+            return Ok(pro);
         }
 
-
+        [HttpDelete("{id}")]
         [TraceProductDeleted]
         public IActionResult Delete(int id)
         {
             var product = ProductManeger.GetAll().FirstOrDefault(i => i.ID == id);
             if (product != null)
             {
-                foreach (var item in product.ProductAttachments)
+                if (ProductManeger.Delete(product))
                 {
-                    if (System.IO.File.Exists($"{Directory.GetCurrentDirectory()}/wwwroot/Images/{item.Image}"
-                      ))
-                    {
-                        System.IO.File.Delete($"{Directory.GetCurrentDirectory()}/wwwroot/Images/{item.Image}");
-                    }
+                    return Ok();   
                 }
-                ProductManeger.Delete(ProductManeger.GetAll().FirstOrDefault(i => i.ID == id));
-
+               return BadRequest();
             }
-            return RedirectToAction("getall", "product");
+               
+            return BadRequest(string.Empty);
         }
 
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> Update(ProductViewModel pro)
         {
             if (!ModelState.IsValid)
-            {
-                return RedirectToAction("getall", "product");
-            }
+                return BadRequest(ModelState);
+            
             if (pro.DeleteOrNot)
             {
-
                 var attachments = ProductManeger.GetAll().Where(p => p.ID == pro.ID).FirstOrDefault();
-                foreach (var item in attachments.ProductAttachments)
-                {
-                    if (System.IO.File.Exists($"{Directory.GetCurrentDirectory()}/wwwroot/Images/{item.Image}"
-                       ))
-                    {
-                        System.IO.File.Delete($"{Directory.GetCurrentDirectory()}/wwwroot/Images/{item.Image}");
-                    }
-                }
                 attachments.ProductAttachments.Clear();
                 dbContext.SaveChanges();
-
             }
+
             foreach (IFormFile item in pro.Attachments)
             {
                 var imageUrl = await cloudinaryService.UploadFileAsync(item);
@@ -90,7 +83,7 @@ namespace E_commerce
             }
             ProductManeger.Update(pro);
 
-            return RedirectToAction("getall", "product");
+            return Created();
         }
 
 
@@ -99,7 +92,7 @@ namespace E_commerce
         {
             if (!ModelState.IsValid && pro.Attachments != null)
             {
-                return RedirectToAction("getall", "product");
+                return BadRequest(ModelState);
             }
             if (pro.Attachments != null)
             {
@@ -111,7 +104,7 @@ namespace E_commerce
             }
 
             ProductManeger.Add(pro);
-            return RedirectToAction("getall", "product");
+            return Created();
 
 
         }
