@@ -53,6 +53,20 @@ namespace Manager
             return await UserManager.ChangePasswordAsync(user, userChange.OldPassword, userChange.NewPassword);
         }
 
+        public async Task<string> GetResetPasswordCode(string email)
+        {
+            var user = await UserManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return await UserManager.GeneratePasswordResetTokenAsync(user);
+            }
+        }
+
+
         public async Task<string> GeneratePasswordResetToken(string email)
         {
             var user =await UserManager.FindByEmailAsync(email);

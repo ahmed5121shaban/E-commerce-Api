@@ -1,3 +1,4 @@
+using E_commerce;
 using Infrastructure;
 using Manager;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -52,7 +53,7 @@ builder.Services.AddScoped<TokenManager>();
 builder.Services.AddScoped<AcountManager>();
 builder.Services.AddScoped<CartManager>();
 builder.Services.AddScoped<ProductManager>();
-
+builder.Services.AddSingleton<CloudinaryService>();
 
 
 
