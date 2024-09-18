@@ -14,10 +14,13 @@ namespace E_commerce.Controllers
     {
         RoleManager roleManager;
         public UserManager<User> UserManager { get; }
-        public RoleController(RoleManager _roleManager, UserManager<User> _userManager)
+        public ILogger<RoleController> Logger { get; }
+
+        public RoleController(RoleManager _roleManager, UserManager<User> _userManager,ILogger<RoleController> _logger)
         {
             roleManager = _roleManager;
             UserManager = _userManager;
+            Logger = _logger;
         }
 
         [HttpPost]
@@ -25,15 +28,16 @@ namespace E_commerce.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("index", "home");
+                var error = ModelState.Values.SelectMany(e=>e.Errors).Select(e=>e.ErrorMessage).ToList();
+                return BadRequest(error);
             }
 
             var res = await roleManager.Add(role);
             if (!res.Succeeded)
             {
-                ModelState.AddModelError("", "You Have Error In Your Addding");
+                return BadRequest(new {Massage = "You Have Error In Your Addding" });
             }
-            return RedirectToAction("index", "home");
+            return Ok();
         }
 
         [HttpPost]
@@ -43,9 +47,9 @@ namespace E_commerce.Controllers
             var res = await UserManager.AddToRoleAsync(user, role);
             if (res.Succeeded)
             {
-                return RedirectToAction("index", "home");
+                return Ok();
             }
-            return RedirectToAction("index", "home");
+            return BadRequest(res.Errors.Select(e=>e.Description));
         }
 
 

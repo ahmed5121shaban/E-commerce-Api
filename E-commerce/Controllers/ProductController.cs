@@ -14,17 +14,19 @@ namespace E_commerce
         ProductManager ProductManeger;
         AppDbContext dbContext;
         CloudinaryService cloudinaryService;
+        private readonly ILogger<ProductController> logger;
 
         public ProductController(ProductManager product,
-            AppDbContext _dbContext, CloudinaryService CloudinaryService)
+            AppDbContext _dbContext, CloudinaryService CloudinaryService,
+            ILogger<ProductController> _logger)
         {
             this.ProductManeger = product;
             this.dbContext = _dbContext;
             this.cloudinaryService = CloudinaryService;
-
+            logger = _logger;
         }
         [HttpGet]
-        public IActionResult GetAll(string columnOrder = "Id", int categoryID = 0,
+        public IActionResult GetProducts(string columnOrder = "Id", int categoryID = 0,
             int price = 0, string productName = "",
             bool IsAscending = false, int PageSize = 4, int PageNumber = 1)
         {
@@ -37,7 +39,7 @@ namespace E_commerce
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetDetailsByID(int id)
+        public IActionResult GetProduct(int id)
         {
             ProductViewModel pro = ProductManeger.GetByID(id).Single().MapToView();
             if (pro == null)
@@ -48,7 +50,7 @@ namespace E_commerce
 
         [HttpDelete("{id}")]
         [TraceProductDeleted]
-        public IActionResult Delete(int id)
+        public IActionResult DeleteProduct(int id)
         {
             var product = ProductManeger.GetAll().FirstOrDefault(i => i.ID == id);
             if (product != null)
@@ -64,11 +66,16 @@ namespace E_commerce
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(ProductViewModel pro)
+        public async Task<IActionResult> UpdateProduct(ProductViewModel pro)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-            
+            {
+                var errors = ModelState.Values
+                            .SelectMany(v => v.Errors)
+                            .Select(e => e.ErrorMessage)
+                            .ToList();
+                return BadRequest(errors);
+            }            
             if (pro.DeleteOrNot)
             {
                 var attachments = ProductManeger.GetAll().Where(p => p.ID == pro.ID).FirstOrDefault();
@@ -83,16 +90,21 @@ namespace E_commerce
             }
             ProductManeger.Update(pro);
 
-            return Created();
+            return NoContent();
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Add(ProductViewModel pro)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> AddProduct([FromForm]ProductViewModel pro)
         {
-            if (!ModelState.IsValid && pro.Attachments != null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                var errors = ModelState.Values
+                            .SelectMany(v => v.Errors)
+                            .Select(e => e.ErrorMessage)
+                            .ToList();
+                return BadRequest(errors);
             }
             if (pro.Attachments != null)
             {

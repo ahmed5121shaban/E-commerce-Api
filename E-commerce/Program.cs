@@ -20,7 +20,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(c =>
     {
-        c.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("conn"));
+        c.UseLazyLoadingProxies().UseSqlServer(builder.Configuration.GetConnectionString("conn")
+            , b => b.MigrationsAssembly("E-commerce"));
     }
 );
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");

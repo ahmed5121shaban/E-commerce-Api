@@ -11,11 +11,14 @@ namespace E_commerce
     [ApiController]
     public class AcountController : ControllerBase
     {
+        private readonly ILogger<AcountController> logger;
+
         AcountManager AcountManager { get; set; }
 
-        public AcountController(AcountManager acountManager)
+        public AcountController(AcountManager acountManager,ILogger<AcountController> _logger)
         {
             AcountManager = acountManager;
+            logger = _logger;
         }
 
         [HttpPost]
@@ -23,40 +26,39 @@ namespace E_commerce
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("index", "home");
+                var error = ModelState.Values
+                            .SelectMany(v => v.Errors)
+                            .Select(e => e.ErrorMessage)
+                            .ToList();
+                return BadRequest(error);
             }
             var res = await AcountManager.Login(user);
             if (res.Succeeded)
             {
-                return RedirectToAction("index", "home");
+                return Ok();
             }
 
-            ModelState.AddModelError("", "The Email/User Name or Password is not Valid");
-            return RedirectToAction("index", "home");
+            return Unauthorized(new { Message = "Invalid email/username or password" });
         }
         [HttpPost]
         public async Task<IActionResult> Register(UserRegisterViewModel user)
         {
             if (!ModelState.IsValid)
             {
-                return RedirectToAction("index", "home");
+                var error = ModelState.Values
+                           .SelectMany(v => v.Errors)
+                           .Select(e => e.ErrorMessage)
+                           .ToList();
+                return BadRequest(error);
             }
 
             var res = await AcountManager.Register(user);
             if (res.Succeeded)
             {
-                return RedirectToAction("login", "acount");
-            }
-            else
-            {
-                foreach (var item in res.Errors)
-                {
-                    ModelState.AddModelError("", item.Description);
-                }
-                return RedirectToAction("index", "home");
+                return Ok();
             }
 
-
+            return BadRequest(res.Errors.Select(e=>e.Description));
         }
 
 
@@ -64,65 +66,58 @@ namespace E_commerce
         [Authorize]
         public async Task<IActionResult> ChangePassword(UserChangePassword viewmodel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                viewmodel.UserID = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var res = await AcountManager.ChangePassword(viewmodel);
-                if (res.Succeeded)
-                {
-                    return RedirectToAction("login");
-                }
-                else
-                {
-                    foreach (var item in res.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);
-                    }
-                    return RedirectToAction("index", "home");
-                }
+                var error = ModelState.Values
+                          .SelectMany(v => v.Errors)
+                          .Select(e => e.ErrorMessage)
+                          .ToList();
+                return BadRequest(error);
             }
-            return RedirectToAction("index", "home");
+            
+            viewmodel.UserID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var res = await AcountManager.ChangePassword(viewmodel);
+            if (res.Succeeded)
+              {
+                 return Ok();
+              }
+             return BadRequest(res.Errors.Select(e=>e.Description));
 
         }
 
         //To get the email and check it from client
-        [HttpGet]
+        [HttpGet("{email}")]
         public async Task<IActionResult> ResetPassword(string email)
         {
             var code = await AcountManager.GetResetPasswordCode(email);
             if (string.IsNullOrEmpty(code))
             {
-                ModelState.AddModelError("", "Your Email Is Not Here");
-                return RedirectToAction("");
+                return BadRequest(new {Massage= "Your Email Is Not Here" });
             }
-            else
-            {
-                EmailHelper mail = new EmailHelper
-                    (email, "Your Code is", $" Code :  {code}");
-                mail.Send();
-                return RedirectToAction("");
-            }
+
+            EmailHelper mail = new EmailHelper(email, "Your Code is", $" Code :  {code}");
+            mail.Send();
+            return Ok();
+            
         }
 
         [HttpPost]
         public async Task<IActionResult> RessetPassword(UserResetPasswordViewModel viewModel)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var res = await AcountManager.RessetPassword(viewModel);
-                if (res.Succeeded)
-                {
-                    return RedirectToAction("login", "Acount");
-                }
-                else
-                {
-                    foreach (var item in res.Errors)
-                    {
-                        ModelState.AddModelError("", item.Description);
-                    }
-                }
+                var error = ModelState.Values
+                          .SelectMany(v => v.Errors)
+                          .Select(e => e.ErrorMessage)
+                          .ToList();
+                return BadRequest(error);
             }
-            return RedirectToAction("login", "Acount");
+            var res = await AcountManager.RessetPassword(viewModel);
+            if (res.Succeeded)
+            {
+                return Ok(new {Massage="Your Password Is Resset"});
+            }
+            return BadRequest(res.Errors.Select(e=>e.Description));
         }
     }
 }

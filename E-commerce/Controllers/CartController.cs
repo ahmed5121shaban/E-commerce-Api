@@ -12,33 +12,42 @@ namespace E_commerce
     [ApiController]
     public class CartController : ControllerBase
     {
+        private readonly ILogger<CartController> logger;
+
         public UserManager<User> UserManager { get; }
         public CartManager cartManager { get; }
         public ProductManager Product { get; }
 
-        public CartController(UserManager<User> user, CartManager _cartManager, ProductManager product)
+        public CartController(UserManager<User> user, CartManager _cartManager, ProductManager product,
+            ILogger<CartController> _logger)
         {
             UserManager = user;
             cartManager = _cartManager;
             Product = product;
+            logger = _logger;
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> AddToCart(int id)
         {
             var user = await UserManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            ProductViewModel pro = Product.GetByID(id).Single().MapToView();
+            
+            if (user == null)
+                return NotFound();
 
+            ProductViewModel pro = Product.GetByID(id).Single().MapToView();
             cartManager.AddToCart(user.Id, pro);
-            return RedirectToAction("AddToCartPage", "cart");
+            return Ok();
         }
 
-
-        public IActionResult Delete(int id)
+        [HttpDelete("{id}")]
+        public IActionResult DeleteCart(int id)
         {
             var cart = cartManager.GetAll().Where(c => c.ID == id).FirstOrDefault();
+            if (cart == null) return NotFound();
 
             cartManager.Delete(cart);
-            return RedirectToAction("AddToCartPage");
+            return Ok();
         }
     }
 }
