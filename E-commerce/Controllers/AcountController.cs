@@ -21,7 +21,7 @@ namespace E_commerce
             logger = _logger;
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(UserLoginViewModel user)
         {
             if (!ModelState.IsValid)
@@ -40,7 +40,7 @@ namespace E_commerce
 
             return Unauthorized(new { Message = "Invalid email/username or password" });
         }
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterViewModel user)
         {
             if (!ModelState.IsValid)
@@ -62,7 +62,7 @@ namespace E_commerce
         }
 
 
-        [HttpPost]
+        [HttpPost("change-password")]
         [Authorize]
         public async Task<IActionResult> ChangePassword(UserChangePassword viewmodel)
         {
@@ -86,8 +86,8 @@ namespace E_commerce
         }
 
         //To get the email and check it from client
-        [HttpGet("{email}")]
-        public async Task<IActionResult> ResetPassword(string email)
+        [HttpGet("reset-password/{email}")]
+        public async Task<IActionResult> RessetPassword(string email)
         {
             var code = await AcountManager.GetResetPasswordCode(email);
             if (string.IsNullOrEmpty(code))
@@ -101,7 +101,7 @@ namespace E_commerce
             
         }
 
-        [HttpPost]
+        [HttpPost("reset-password")]
         public async Task<IActionResult> RessetPassword(UserResetPasswordViewModel viewModel)
         {
             if (!ModelState.IsValid)

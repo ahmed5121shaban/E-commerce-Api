@@ -23,7 +23,7 @@ namespace E_commerce.Controllers
             Logger = _logger;
         }
 
-        [HttpPost]
+        [HttpPost("add-role")]
         public async Task<IActionResult> AddRole(RoleViewModel role)
         {
             if (!ModelState.IsValid)
@@ -40,7 +40,7 @@ namespace E_commerce.Controllers
             return Ok();
         }
 
-        [HttpPost]
+        [HttpPost("assign-role")]
         public async Task<IActionResult> AssignRole(string id, string role)
         {
             var user = UserManager.Users.FirstOrDefault(x => x.Id == id);

@@ -41,7 +41,7 @@ namespace E_commerce
         [HttpGet("{id}")]
         public IActionResult GetProduct(int id)
         {
-            ProductViewModel pro = ProductManeger.GetByID(id).Single().MapToView();
+            ProductViewModel pro = ProductManeger.GetByID(id).FirstOrDefault().MapToView();
             if (pro == null)
                 return NotFound();
 

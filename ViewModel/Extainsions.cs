@@ -60,11 +60,17 @@ namespace ViewModel
         }
         public static ProductViewModel MapToView(this Product productView)
         {
+            if(productView == null)
+                return null;
             List<string> paths = new List<string>();
-            foreach (var item in productView.ProductAttachments)
+            if (!(productView.ProductAttachments == null))
             {
-                paths.Add(item.Image);
+                foreach (var item in productView.ProductAttachments)
+                {
+                    paths.Add(item.Image);
+                }
             }
+            
 
             return new ProductViewModel
             {
