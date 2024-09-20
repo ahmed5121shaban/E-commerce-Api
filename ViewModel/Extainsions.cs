@@ -83,7 +83,6 @@ namespace ViewModel
                 ProductsImageList = paths
             };
         }
-
         public static User MapFromRegisterToUser(this UserRegisterViewModel user)
         {
             return new User
@@ -92,7 +91,6 @@ namespace ViewModel
                 UserName = user.UserName,
             };
         }
-
         public static User MapFromLoginToUser(this UserLoginViewModel user)
         {
             return new User
@@ -101,5 +99,11 @@ namespace ViewModel
                 Email = user.Login.Contains("@") ? user.Login : null,
             };
         }
+        public static Category MapToCategoryViewModel(this CategoryViewModel categoryView)
+        {
+            return new Category { ID = (int)categoryView.ID, Image = categoryView.Image.FileName
+            , Name = categoryView.Name, Products = categoryView.Products};
+        }
+
     }
 }

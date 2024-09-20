@@ -27,7 +27,7 @@ namespace E_commerce
             logger = _logger;
         }
 
-        [HttpGet("{id}")]
+        [HttpPost]
         public async Task<IActionResult> AddToCart(int id)
         {
             var user = await UserManager.FindByIdAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -47,6 +47,30 @@ namespace E_commerce
             if (cart == null) return NotFound();
 
             cartManager.Delete(cart);
+            return Ok();
+        }
+
+        //GET /cart - Get cart items for the current user.
+        [HttpGet]
+        public IActionResult GetCart()
+        {
+            var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userID == null) return NotFound(new { massage = "the user not found" });
+            var cartList = cartManager.GetAll().Where(c => c.UserID == userID).ToList();
+            if (cartList.Count == 0) return NoContent();
+            return Ok(cartList);
+        }
+        [HttpDelete("clear")]
+        public IActionResult Clear()
+        {
+            var userID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userID == null) return NotFound(new {massage="the user not found"});
+            var cartItems = cartManager.GetAll().Where(c => c.UserID == userID);
+            if(!cartItems.Any()) return NoContent();
+            foreach (var item in cartItems)
+            {
+                cartManager.Delete(item);
+            }
             return Ok();
         }
     }

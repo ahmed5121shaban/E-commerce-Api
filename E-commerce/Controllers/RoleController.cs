@@ -51,7 +51,22 @@ namespace E_commerce.Controllers
             }
             return BadRequest(res.Errors.Select(e=>e.Description));
         }
+        [HttpGet]
+        public async Task<IActionResult> GetRoles() 
+        {
+            var roles = roleManager.GetAll().ToList();
+            if (!roles.Any()) { return NoContent(); }
+            return Ok(roles);
+        }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult>Roles(string id)
+        {
+            var role =await roleManager.GetByID(id);
+            if (role == null) { return BadRequest(new { Massage = "No role With This ID" }); }
+            if (roleManager.Delete(role)){ return NoContent(); }
+            return BadRequest(new { Massage = "Not Deleted" });
+        }
 
     }
 }
