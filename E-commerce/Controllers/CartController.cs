@@ -1,4 +1,5 @@
 ﻿using Manager;
+using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -58,7 +59,7 @@ namespace E_commerce
             if (userID == null) return NotFound(new { massage = "the user not found" });
             var cartList = cartManager.GetAll().Where(c => c.UserID == userID).ToList();
             if (cartList.Count == 0) return NoContent();
-            return Ok(cartList);
+            return Ok(cartList.Adapt<List<CartItemViewModel>>());
         }
         [HttpDelete("clear")]
         public IActionResult Clear()

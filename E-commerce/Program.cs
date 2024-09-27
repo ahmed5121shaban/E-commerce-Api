@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Models;
 using System.Text;
+using Mappings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,11 +51,14 @@ builder.Services.Configure<IdentityOptions>(option =>
     option.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
 });
 
+MapsterConfiguration.RegisterMappings();
 builder.Services.AddScoped<TokenManager>();
 builder.Services.AddScoped<AcountManager>();
 builder.Services.AddScoped<CartManager>();
 builder.Services.AddScoped<ProductManager>();
 builder.Services.AddSingleton<CloudinaryService>();
+builder.Services.AddScoped<WishListItemManager>();
+
 
 
 

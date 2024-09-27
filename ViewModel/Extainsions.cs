@@ -105,5 +105,13 @@ namespace ViewModel
             , Name = categoryView.Name, Products = categoryView.Products};
         }
 
+       public static WishListItem MapToWishListItemViewModel(this WishListItemViewModel wishListView)
+        {
+            return new WishListItem
+            {
+               ProductID = wishListView.ProductID,
+               UserID = wishListView.UserID,
+            };
+        }
     }
 }

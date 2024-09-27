@@ -1,4 +1,6 @@
 ﻿using Infrastructure;
+using Mapster;
+using MapsterMapper;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -11,24 +13,30 @@ namespace Manager
 {
     public class CategoryManager : BaseManager<Category>
     {
-        public CategoryManager(AppDbContext appContext):base(appContext){}
+        private readonly Mapper mapper;
 
-        public IQueryable<Category> GetAll()
+        public CategoryManager(AppDbContext appContext,Mapper mapper):base(appContext)
         {
-            return base.GetAll();
+            this.mapper = mapper;
         }
 
-        public async Task<Category> Get(string _ID)
+        public IQueryable<CategoryViewModel> GetAll()
+        {
+            //var map = mapper.Adapt<>()
+            return base.GetAll().Adapt<IQueryable<CategoryViewModel>>();
+        }
+
+        public async Task<CategoryViewModel> Get(int _ID)
         {
             var category =await base.GetByID( _ID );
-            return category;
+            return category.Adapt<CategoryViewModel>();
         }
 
         public bool Add(CategoryViewModel _categoryView)
         {
             try 
             {
-                base.Add(_categoryView.MapToCategoryViewModel());
+                base.Add(_categoryView.Adapt<Category>());
                 return true;
             }
             catch (Exception ex) 
@@ -44,7 +52,7 @@ namespace Manager
         {
             try
             {
-                base.Update(_categoryView.MapToCategoryViewModel());
+                base.Update(_categoryView.Adapt<Category>());
                 return true;
             }
             catch (Exception ex)
@@ -55,17 +63,19 @@ namespace Manager
 
         }
 
-        public bool Delete(CategoryViewModel _categoryView)
+        public async Task<bool> Delete(int id)
         {
+            var category = await base.GetByID(id);
+            if (category == null) { return false; }
             try
             {
-                base.Delete(_categoryView.MapToCategoryViewModel());
+                base.Delete(category);
                 return true;
             }
             catch (Exception ex)
             {
                 //should do logging here
-                throw ex.InnerException;
+                throw ex;
             }
 
         }

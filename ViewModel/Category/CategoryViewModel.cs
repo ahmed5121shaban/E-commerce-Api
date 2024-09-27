@@ -16,6 +16,6 @@ namespace ViewModel
         public string Name { get; set; }
         [Required]
         public IFormFile Image { get; set; }
-        public virtual List<Product> Products { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
     }
 }

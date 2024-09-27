@@ -1,6 +1,7 @@
 ﻿using Manager;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ViewModel;
 
 namespace E_commerce.Controllers
 {
@@ -34,5 +35,71 @@ namespace E_commerce.Controllers
            
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCategory(int id) {
+            try 
+            {
+               var category = await categoryManager.Get(id);
+                if(category == null) return NoContent();
+                return Ok(category);
+            } 
+            catch (Exception ex) 
+            { 
+                return BadRequest(ex.Message);
+            }
+
+        }
+        [HttpPost]
+        public IActionResult AddCategory(CategoryViewModel categoryView) 
+        {
+            if (!ModelState.IsValid) 
+            {
+                return BadRequest(new {Message="this data not completed"});
+            }
+
+            try
+            {
+                categoryManager.Add(categoryView);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            try
+            {
+                await categoryManager.Delete(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public IActionResult UpdateCategory(CategoryViewModel categoryView) {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { Message = "this data not completed" });
+            }
+
+            try
+            {
+                categoryManager.Update(categoryView);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

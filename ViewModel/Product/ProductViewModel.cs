@@ -22,7 +22,10 @@ namespace ViewModel
         public int Quantity { get; set; }
         [Required(ErrorMessage = "This Faild Is Required")]
         public int CategoryID { get; set; }
+        [Required,StringLength(maximumLength:50,MinimumLength =3)]
+        public string CategoryName { get; set; }
 
+        public string CategoryImage { get; set; }
         public bool DeleteOrNot { get; set; } = false;
         public IFormFileCollection Attachments { get; set; }
         public List<string> ProductsImageList { get; set; } = new List<string>();

@@ -12,13 +12,18 @@ namespace E_commerce
     public class AcountController : ControllerBase
     {
         private readonly ILogger<AcountController> logger;
+        private readonly TokenManager tokenManager;
+        private readonly IConfiguration configuration;
 
         AcountManager AcountManager { get; set; }
 
-        public AcountController(AcountManager acountManager,ILogger<AcountController> _logger)
+        public AcountController(AcountManager acountManager,ILogger<AcountController> _logger,
+            TokenManager tokenManager,IConfiguration configuration)
         {
             AcountManager = acountManager;
             logger = _logger;
+            this.tokenManager = tokenManager;
+            this.configuration = configuration;
         }
 
         [HttpPost("login")]
@@ -35,7 +40,8 @@ namespace E_commerce
             var res = await AcountManager.Login(user);
             if (res.Succeeded)
             {
-                return Ok();
+                var _token =tokenManager.GenerateToken(user.MapFromLoginToUser());
+                return Ok(new {token= _token,expiration = DateTime.Now.AddDays(1) });
             }
 
             return Unauthorized(new { Message = "Invalid email/username or password" });

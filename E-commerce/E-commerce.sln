@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.34916.146
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E-commerce", "E-commerce.csproj", "{CFFD3089-0D89-4522-8722-39B5A2EAF362}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E-commerce", "E-commerce.csproj", "{CFFD3089-0D89-4522-8722-39B5A2EAF362}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Manager", "..\Manager\Manager.csproj", "{535DD294-475A-43B5-B28E-6E9D21BA8386}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Manager", "..\Manager\Manager.csproj", "{535DD294-475A-43B5-B28E-6E9D21BA8386}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "..\Models\Models.csproj", "{4E34925A-0D76-4773-A11C-5F458C38573F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "..\Models\Models.csproj", "{4E34925A-0D76-4773-A11C-5F458C38573F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViewModel", "..\ViewModel\ViewModel.csproj", "{12CB69FC-F799-4CC5-8037-CF20CAD3B07B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewModel", "..\ViewModel\ViewModel.csproj", "{12CB69FC-F799-4CC5-8037-CF20CAD3B07B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "..\Infrastructure\Infrastructure.csproj", "{C2FF3B29-6511-4284-9DEF-A9484B0D6FFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "..\Infrastructure\Infrastructure.csproj", "{C2FF3B29-6511-4284-9DEF-A9484B0D6FFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mappings", "..\Mappings\Mappings.csproj", "{57A1452F-45C1-4685-84A1-3BB9B22AF3D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{C2FF3B29-6511-4284-9DEF-A9484B0D6FFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2FF3B29-6511-4284-9DEF-A9484B0D6FFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2FF3B29-6511-4284-9DEF-A9484B0D6FFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57A1452F-45C1-4685-84A1-3BB9B22AF3D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57A1452F-45C1-4685-84A1-3BB9B22AF3D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57A1452F-45C1-4685-84A1-3BB9B22AF3D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57A1452F-45C1-4685-84A1-3BB9B22AF3D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
